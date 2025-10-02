@@ -6,19 +6,19 @@ const works = [
     title: "NetChat",
     desc: "Real-time chat app with modern UI, secure authentication, and smooth messaging.",
     image: "/NetChat.png",
-    href:"https://net-chat-five.vercel.app/"
+    href: "https://net-chat-five.vercel.app/",
   },
   {
     title: "User Dashboard",
     desc: "A responsive user management system with role-based access and clean analytics.",
     image: "/users.jpg",
-    href:"https://5-oy-10-dars-sooty.vercel.app/"
+    href: "https://5-oy-10-dars-sooty.vercel.app/",
   },
   {
     title: "Healthy Blog",
     desc: "Lifestyle & health blog platform with authentication and content management.",
     image: "/healthy.png",
-    href:"https://end-exam.vercel.app/"
+    href: "https://end-exam.vercel.app/",
   },
 ];
 
@@ -59,16 +59,15 @@ const Works = () => {
               <p className="text-gray-600 leading-relaxed">{work.desc}</p>
             </div>
             <a
-  href={work.href}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="inline-block px-6 py-2 ml-2 mb-2 mt-4 bg-black/70 text-white font-semibold 
+              href={work.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-2 ml-2 mb-2 mt-4 bg-black/70 text-white font-semibold 
              rounded-lg shadow-md hover:bg-black/70 hover:shadow-xl 
              transition-all duration-300 ease-in-out"
->
-  View
-</a>
-
+            >
+              View
+            </a>
           </motion.div>
         ))}
       </div>
