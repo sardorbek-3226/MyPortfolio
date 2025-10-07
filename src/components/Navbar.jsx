@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
 
-const navItems = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Works", path: "/works" },
-  { name: "Contact me", path: "/contact" },
-];
+
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);

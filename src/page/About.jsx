@@ -1,20 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const AboutClean = () => {
+const About = () => {
   return (
     <motion.section
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100 p-6 md:p-12"
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black-50 to-purple-100 p-6 md:p-12"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <div className="flex flex-col md:grid-cols-2 gap-12 max-w-6xl w-full items-start">
-        {/* Left Column */}
-        <div className="flex items-center md:items-start gap-6">
-          {/* Profile Image Card */}
+        <div className="flex items-center md:items-start gap-6 max-md:flex-col">
           <motion.div
-            className="p-6 rounded-xl shadow-md bg-white w-[50%] h-50 hover:shadow-xl transition"
+            className="p-6 rounded-xl shadow-md bg-white w-[50%] h-50 hover:shadow-xl transition max-md:hidden"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -22,11 +20,10 @@ const AboutClean = () => {
             <img
               src="/man.jpg"
               alt="Sardor"
-              className="w-[200px] h-10 md:w-40 md:h-40 object-cover rounded-full mx-auto"
+              className="w-[200px] h-10 md:w-40 md:h-40 object-cover rounded-full mx-auto "
             />
           </motion.div>
 
-          {/* About Text Card */}
           <motion.div
             className="p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
             initial={{ x: -40, opacity: 0 }}
@@ -48,11 +45,11 @@ const AboutClean = () => {
         </div>
 
         {/* Right Column */}
-        <div className="grid grid-cols-2 w-[100%] items-center md:items-start gap-6">
+        <div className="grid grid-cols-2 w-full items-center md:items-start gap-6 max-sm:grid-cols-1">
           {/* JS Figure Card */}
          <div className="flex flex-col gap-4 ">
          <motion.div
-            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
+            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition max-[730px]:flex-col"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -69,7 +66,7 @@ const AboutClean = () => {
             </p>
           </motion.div>
           <motion.div
-            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
+            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition max-[730px]:flex-col"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -89,7 +86,6 @@ const AboutClean = () => {
           </motion.div>
          </div>
 
-          {/* JS Skills Card */}
           <motion.div
             className="p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
             initial={{ y: 20, opacity: 0 }}
@@ -112,4 +108,4 @@ const AboutClean = () => {
   );
 };
 
-export default AboutClean;
+export default About;
