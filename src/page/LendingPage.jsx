@@ -14,12 +14,7 @@ const BackgroundEffect = () => {
 
   useEffect(() => {
     const tempShapes = Array.from({ length: 60 }).map(() => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      size: 10 + Math.random() * 20,
-      dx: (Math.random() - 0.5) * 2,
-      dy: (Math.random() - 0.5) * 2,
-      opacity: 0.2 + Math.random() * 0.3,
+    
     }));
     setShapes(tempShapes);
   }, []);

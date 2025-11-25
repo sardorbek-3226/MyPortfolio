@@ -32,13 +32,13 @@ const Home = () => {
 
       {/* Profile Image */}
       <motion.img
-        src="/man.jpg"
+        src="/ormanchi.jpg"
         alt="Profile"
         className="rounded-full shadow-lg w-40 h-40 md:w-80 md:h-80 object-cover mb-6 md:mb-0"
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 1, delay: 0.6 }}
-        whileHover={{ scale: 1.05, rotate: 2 }}
+
       />
     </motion.section>
   );

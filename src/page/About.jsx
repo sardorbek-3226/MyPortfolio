@@ -18,7 +18,7 @@ const About = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <img
-              src="/man.jpg"
+              src="/ormanchi.jpg"
               alt="Sardor"
               className="w-[200px] h-10 md:w-40 md:h-40 object-cover rounded-full mx-auto "
             />
