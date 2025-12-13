@@ -1,108 +1,107 @@
+// About.jsx
 import React from "react";
 import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2, delayChildren: 0.1 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 60 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+};
 
 const About = () => {
   return (
     <motion.section
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black-50 to-purple-100 p-6 md:p-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
+      id="about"
+      className="relative min-h-screen flex items-center bg-white text-black px-6 md:px-20 overflow-hidden"
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true }}
     >
-      <div className="flex flex-col md:grid-cols-2 gap-12 max-w-6xl w-full items-start">
-        <div className="flex items-center md:items-start gap-6 max-md:flex-col">
-          <motion.div
-            className="p-6 rounded-xl shadow-md bg-white w-[50%] h-50 hover:shadow-xl transition max-md:hidden"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <img
-              src="/ormanchi.jpg"
-              alt="Sardor"
-              className="w-[200px] h-10 md:w-40 md:h-40 object-cover rounded-full mx-auto "
-            />
-          </motion.div>
+      {/* subtle background typography */}
+      <motion.h1
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[18vw] font-extrabold text-black/5 select-none pointer-events-none"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+      >
+        ABOUT
+      </motion.h1>
 
-          <motion.div
-            className="p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
-            initial={{ x: -40, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">About Me</h2>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              Hi 👋 I’m <span className="font-semibold">Sardor</span>, a{" "}
-              <span className="font-semibold">Frontend Developer</span>{" "}
-              passionate about building clean, responsive, and modern web
-              applications. Skilled in{" "}
-              <span className="text-black font-bold">React</span>,{" "}
-              <span className="text-black font-bold">TailwindCSS</span>, and{" "}
-              <span className="text-black font-bold">DaisyUI</span>, focusing on
-              usability, performance, and interactive UI.
-            </p>
-          </motion.div>
-        </div>
+      <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        {/* LEFT CONTENT */}
+        <motion.div variants={item} className="space-y-8">
+          <div className="overflow-hidden">
+            <motion.h2
+              className="text-5xl md:text-6xl font-bold tracking-tight"
+              initial={{ y: 80 }}
+              whileInView={{ y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              About Me
+            </motion.h2>
+          </div>
 
-        {/* Right Column */}
-        <div className="grid grid-cols-2 w-full items-center md:items-start gap-6 max-sm:grid-cols-1">
-          {/* JS Figure Card */}
-         <div className="flex flex-col gap-4 ">
-         <motion.div
-            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition max-[730px]:flex-col"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <img
-              src="/js.jpg"
-              alt="JavaScript"
-              className="w-16 h-16 object-contain rounded-lg shadow-md"
-            />
-            <p className="text-gray-700 text-sm leading-relaxed max-w-xs">
-              JavaScript is my{" "}
-              <span className="font-semibold text-yellow-600">core tool</span>{" "}
-              for building interactive UIs and managing application logic.
-            </p>
-          </motion.div>
-          <motion.div
-            className="flex items-center gap-4 p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition max-[730px]:flex-col"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <img
-              src="/react.svg"
-              alt="React"
-              className="w-16 h-16 object-contain rounded-lg shadow-md"
-            />
-            <p className="text-gray-700 text-sm leading-relaxed max-w-xs">
-              React is my{" "}
-              <span className="font-semibold text-blue-600">
-                favorite library
-              </span>{" "}
-              for building fast, reusable, and dynamic user interfaces.
-            </p>
-          </motion.div>
-         </div>
+          <motion.p variants={item} className="text-black/70 text-lg leading-relaxed max-w-xl">
+            I’m <span className="font-semibold text-black">Sardor</span>, a frontend developer who
+            builds visually clean, motion-driven, and performance-focused web
+            experiences. I focus on minimal design with strong interaction.
+          </motion.p>
 
-          <motion.div
-            className="p-6 rounded-xl shadow-md bg-white w-full hover:shadow-xl transition"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              JavaScript Skills
-            </h3>
-            <ul className="text-gray-700 space-y-2 text-sm list-disc list-inside">
-              <li>ES6+ modern syntax</li>
-              <li>REST API integration</li>
-              <li>Reusable components</li>
-              <li>Performance optimization</li>
+          <motion.p variants={item} className="text-black/70 leading-relaxed max-w-xl">
+            I work mainly with <span className="font-semibold">JavaScript</span>,
+            <span className="font-semibold"> React</span>, and
+            <span className="font-semibold"> Tailwind CSS</span>, using animation
+            as a core part of user experience rather than decoration.
+          </motion.p>
+
+          <motion.div variants={item} className="flex gap-6 pt-4">
+            <span className="text-sm uppercase tracking-widest border border-black px-4 py-2">Frontend</span>
+            <span className="text-sm uppercase tracking-widest border border-black px-4 py-2">UI Motion</span>
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT CONTENT */}
+        <motion.div variants={item} className="relative border border-black/10 p-10">
+          <div className="absolute -top-4 -left-4 w-full h-full border border-black/20" />
+
+          <div className="relative space-y-6">
+            <div className="flex justify-between items-center">
+              <span className="uppercase tracking-widest text-sm">Core Skills</span>
+              <span className="text-sm text-black/50">Focus Areas</span>
+            </div>
+
+            <ul className="space-y-5 text-sm">
+              <li className="flex justify-between items-center">
+                <span>JavaScript (ES6+)</span>
+                <span className="text-black/50">Logic & Architecture</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <span>React</span>
+                <span className="text-black/50">Component Systems</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <span>Tailwind CSS</span>
+                <span className="text-black/50">Design Systems</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <span>Framer Motion</span>
+                <span className="text-black/50">Interaction Design</span>
+              </li>
             </ul>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </motion.section>
   );

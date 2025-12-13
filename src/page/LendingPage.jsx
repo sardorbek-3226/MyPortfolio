@@ -1,22 +1,30 @@
 // LandingPage.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBars, FaTimes, FaMousePointer } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 import Home from "./Home";
 import About from "./About";
 import Works from "./Works";
 import Contact from "./Contact";
 
-// --- Orqa fon effekti ---
+/* =========================
+   BACKGROUND MOTION EFFECT
+   Minimal, black & white
+========================= */
 const BackgroundEffect = () => {
   const [shapes, setShapes] = useState([]);
 
   useEffect(() => {
-    const tempShapes = Array.from({ length: 60 }).map(() => ({
-    
+    const temp = Array.from({ length: 50 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: Math.random() * 6 + 2,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3,
+      opacity: Math.random() * 0.4 + 0.1,
     }));
-    setShapes(tempShapes);
+    setShapes(temp);
   }, []);
 
   useEffect(() => {
@@ -25,14 +33,17 @@ const BackgroundEffect = () => {
         prev.map((s) => {
           let nx = s.x + s.dx;
           let ny = s.y + s.dy;
+
           if (nx < 0) nx = window.innerWidth;
           if (nx > window.innerWidth) nx = 0;
           if (ny < 0) ny = window.innerHeight;
           if (ny > window.innerHeight) ny = 0;
+
           return { ...s, x: nx, y: ny };
         })
       );
     }, 16);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -55,32 +66,12 @@ const BackgroundEffect = () => {
   );
 };
 
-// --- Cursor effekti ---
-const CursorEffect = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e) =>
-      setMousePos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  return (
-    <motion.div
-      className="fixed top-0 left-0 pointer-events-none text-black z-50"
-      style={{ fontSize: 24, transform: "translate(-50%, -50%)" }}
-      animate={{ x: mousePos.x, y: mousePos.y }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-    >
-      <FaMousePointer />
-    </motion.div>
-  );
-};
-
-// --- LandingPage ---
+/* =========================
+   LANDING PAGE
+========================= */
 const LandingPage = () => {
   const [open, setOpen] = useState(false);
+
   const navItems = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
@@ -89,34 +80,36 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="relative scroll-smooth">
-      {/* Orqa fon va cursor har doim sahifa bo‘ylab */}
+    <div className="relative scroll-smooth bg-white text-black">
       <BackgroundEffect />
-      <CursorEffect />
 
-      {/* Navbar */}
+      {/* NAVBAR */}
       <motion.nav
-        className="fixed top-0 left-0 w-full bg-white shadow-md z-50"
+        className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-black/10 z-50"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <img
-              src="/mypro.png"
-              alt="logo"
-              className="w-10 h-10 rounded-full shadow-md"
-            />
-            <h1 className="text-2xl font-extrabold tracking-wide">
-              My Portfolio
-            </h1>
-          </div>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-3">
+  {/* Logo */}
+  <img
+    src="/mypro.png"  // Demo rasm, keyin o'zing logoni qo'yasan
+    alt="Logo"
+    className="w-10 h-10 rounded-full object-cover"
+  />
 
-          <ul className="hidden md:flex items-center gap-8 text-lg font-semibold">
-            {navItems.map((item, i) => (
-              <li key={i}>
-                <a href={item.href} className="hover:text-black/50 transition">
+  {/* Sarlavha */}
+  <h1 className="text-xl font-bold tracking-wide">Portfolio</h1>
+</div>
+
+          <ul className="hidden md:flex gap-10 text-sm uppercase tracking-widest">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <a
+                  href={item.href}
+                  className="relative after:block after:h-[1px] after:w-0 after:bg-black after:transition-all after:duration-300 hover:after:w-full"
+                >
                   {item.name}
                 </a>
               </li>
@@ -124,30 +117,31 @@ const LandingPage = () => {
           </ul>
 
           <button
-            className="md:hidden text-2xl p-2"
+            className="md:hidden text-xl"
             onClick={() => setOpen(!open)}
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label="Toggle menu"
           >
             {open ? <FaTimes /> : <FaBars />}
           </button>
         </div>
 
+        {/* MOBILE MENU */}
         <AnimatePresence>
           {open && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-white shadow-inner px-6 pb-4"
+              transition={{ duration: 0.4 }}
+              className="md:hidden px-6 pb-6"
             >
-              <ul className="flex flex-col gap-4 text-lg font-semibold">
-                {navItems.map((item, i) => (
-                  <li key={i}>
+              <ul className="flex flex-col gap-6 text-sm uppercase tracking-widest">
+                {navItems.map((item) => (
+                  <li key={item.name}>
                     <a
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className="block py-2 hover:text-black/40 transition"
+                      className="block"
                     >
                       {item.name}
                     </a>
@@ -159,59 +153,47 @@ const LandingPage = () => {
         </AnimatePresence>
       </motion.nav>
 
-      {/* Bo‘limlar */}
+      {/* SECTIONS */}
       <motion.section
         id="home"
-        className="pt-10 relative z-10"
-        initial={{ opacity: 0, y: 50 }}
+        className="pt-32"
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.9 }}
       >
         <Home />
       </motion.section>
 
       <motion.section
         id="about"
-        className="relative z-10"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+        transition={{ duration: 0.9, delay: 0.2 }}
       >
         <About />
       </motion.section>
 
       <motion.section
         id="works"
-        className="relative z-10"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4 }}
+        transition={{ duration: 0.9, delay: 0.4 }}
       >
         <Works />
       </motion.section>
 
       <motion.section
         id="contact"
-        className="relative z-10 pb-16"
-        initial={{ opacity: 0, y: 50 }}
+        className="pb-24"
+        initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.6 }}
+        transition={{ duration: 0.9, delay: 0.6 }}
       >
         <Contact />
-        <div className="flex justify-center mt-8">
-          <a
-            href="https://t.me/ibragimov_3226"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-black/80 text-white px-6 py-3 rounded-lg hover:bg-black/60 transition"
-          >
-            Message Me on Telegram
-          </a>
-        </div>
       </motion.section>
     </div>
   );

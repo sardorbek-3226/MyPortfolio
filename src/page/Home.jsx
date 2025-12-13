@@ -32,7 +32,7 @@ const Home = () => {
 
       {/* Profile Image */}
       <motion.img
-        src="/ormanchi.jpg"
+        src="/man.jpg"
         alt="Profile"
         className="rounded-full shadow-lg w-40 h-40 md:w-80 md:h-80 object-cover mb-6 md:mb-0"
         initial={{ x: 100, opacity: 0 }}
