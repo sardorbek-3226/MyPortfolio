@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const container = {
   hidden: { opacity: 0 },
@@ -26,17 +28,18 @@ const Contact = () => {
     setSending(true);
 
     emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY)
-      .then(
-        (result) => {
-          alert("Message sent successfully!");
-          e.target.reset();
-          setSending(false);
-        },
-        (error) => {
-          alert("Failed to send message, try again.");
-          setSending(false);
-        }
-      );
+    .then(
+      () => {
+        toast.success("Message sent successfully 🚀");
+        e.target.reset();
+        setSending(false);
+      },
+      () => {
+        toast.error("Failed to send message, try again 😕");
+        setSending(false);
+      }
+    );
+    
   };
 
   return (

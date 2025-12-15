@@ -4,93 +4,93 @@ import { motion } from "framer-motion";
 const works = [
   {
     title: "NetChat",
-    desc: "Real-time chat app with modern UI, secure authentication, and smooth messaging.",
+    category: "Real-time chat app with secure auth and modern UI.",
     image: "/NetChat.png",
-    href: "https://net-chat-five.vercel.app/",
+    link: "https://net-chat-five.vercel.app/",
   },
   {
     title: "Healthy Blog",
-    desc: "Lifestyle & health blog platform with authentication and content management.",
+    category: "Blog platform with authentication and content management.",
     image: "/healthy.png",
-    href: "https://end-exam.vercel.app/",
+    link: "https://end-exam.vercel.app/",
   },
   {
-    title: "DiaNova Platformasi",
-    desc: "Diabet nazorati, mahsulotlar monitoringi va sog‘liqni kuzatish uchun yagona platforma.",
+    title: "DiaNova",
+    category: "Healthcare platform for diabetes monitoring.",
     image: "/deanova.jpg",
-    href: "https://dea-nova.vercel.app/"
+    link: "https://dea-nova.vercel.app/",
   },
   {
-    title: "Portfolio Website",
-    desc: "My personal portfolio with React, TailwindCSS, framer-motion, and EmailJS integration.",
+    title: "Portfolio",
+    category: "Personal portfolio built with React & Tailwind.",
     image: "/mypro.png",
-    href: "https://ibrohimovs.vercel.app/"
+    link: "https://ibrohimovs.vercel.app/",
   },
   {
-    title: "Portfolio Website",
-    desc: "My personal portfolio with React, TailwindCSS, framer-motion, and EmailJS integration.",
-    image: "/mypro.png",
-    href: "https://ibrohimovs.vercel.app/"
+    title: "Ludish",
+    category: "Fast, simple website with no registration required.",
+    image: "/ludish.png",
+    link: "https://ludish.vercel.app/",
   },
   {
-    title: "Portfolio Website",
-    desc: "My personal portfolio with React, TailwindCSS, framer-motion, and EmailJS integration.",
-    image: "/mypro.png",
-    href: "https://ibrohimovs.vercel.app/"
+    title: "Healthy Food",
+    category: "Website about healthy nutrition and lifestyle.",
+    image: "/endexam.png",
+    link: "https://end-exam.vercel.app/",
   },
 ];
 
 const Works = () => {
   return (
-    <motion.section
-      className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 py-20 px-6 md:px-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-    >
-      <h1 className="text-5xl font-extrabold text-center text-gray-800 mb-16">
-        My <span className="text-purple-600">Works</span>
-      </h1>
+    <section className="min-h-screen bg-white px-6 md:px-12 py-24">
+      {/* Title */}
+      <div className="max-w-7xl mx-auto mb-20">
+        <h1 className="text-6xl font-extrabold tracking-tight">
+          Selected <span className="text-black/40">Works</span>
+        </h1>
+        <p className="mt-4 text-black/60 max-w-xl">
+          A selection of projects showcasing my frontend skills and experience.
+        </p>
+      </div>
 
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+      {/* Grid */}
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
         {works.map((work, i) => (
-          <motion.div
+          <motion.a
             key={i}
-            className="relative bg-white/30 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden group cursor-pointer hover:scale-105 hover:shadow-2xl transition-transform duration-500"
-            initial={{ y: 60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: i * 0.2, duration: 0.7 }}
+            href={work.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: i * 0.1 }}
+            viewport={{ once: true }}
+            className="group relative border border-black/10 overflow-hidden"
           >
-            <div className="h-64 md:h-72 overflow-hidden relative rounded-t-3xl">
-              <img
-                src={work.image}
-                alt={work.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
-            </div>
+            {/* Image */}
+            <img
+              src={work.image}
+              alt={work.title}
+              className="w-full h-[320px] object-cover transition-transform duration-700 group-hover:scale-105"
+            />
 
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6">
+              <h2 className="text-2xl font-bold text-white mb-2">
                 {work.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed">{work.desc}</p>
-            </div>
+              <p className="text-white/80 text-sm mb-4">
+                {work.desc}
+              </p>
 
-            <a
-              href={work.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-6 py-2 ml-2 mb-2 mt-4 bg-purple-600 text-white font-semibold 
-             rounded-lg shadow-md hover:bg-purple-700 hover:shadow-xl 
-             transition-all duration-300 ease-in-out"
-            >
-              View
-            </a>
-          </motion.div>
+              <span className="inline-block w-fit border border-white px-4 py-2 text-white text-sm uppercase tracking-widest">
+                View Project →
+              </span>
+            </div>
+          </motion.a>
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 };
 
