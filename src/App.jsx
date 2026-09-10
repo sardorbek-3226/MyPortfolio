@@ -8,9 +8,8 @@ const App = () => {
   return (
     <div className="App">
       <LandingPage />
-<ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
     </div>
-    
   );
 };
 

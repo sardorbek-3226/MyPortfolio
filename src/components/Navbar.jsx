@@ -1,151 +1,233 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { FaGithub, FaTelegram } from "react-icons/fa6";
+import { HiBars3, HiXMark } from "react-icons/hi2";
 
-
+const NAV_ITEMS = [
+  { name: "Bosh sahifa", href: "#home" },
+  { name: "Men haqimda", href: "#about" },
+  { name: "Ko'nikmalar", href: "#skills" },
+  { name: "Loyihalar", href: "#works" },
+  { name: "Bog'lanish", href: "#contact" },
+];
 
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      const sections = ["home", "about", "skills", "works", "contact"];
+      const scrollPosition = window.scrollY + 200;
+
+      for (const section of sections) {
+        const el = document.getElementById(section);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    setIsOpen(false);
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
-    <motion.nav
-      className="container mx-auto py-4 px-6"
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <motion.img
-            src="/mypro.png"
-            alt="logo"
-            className="rounded-full shadow-lg w-15"
-            whileHover={{ scale: 1.1, rotate: 10 }}
-            transition={{ type: "spring", stiffness: 200 }}
-          />
-          <Link
-            to="/"
-            className="text-2xl font-extrabold tracking-wide cursor-pointer hover:text-black/70 transition"
-          >
-            My Portfolio
-          </Link>
-        </div>
-
-        <ul className="hidden md:flex items-center gap-8 text-lg italic font-bold">
-          {navItems.map((item, i) => (
-            <motion.li
-              key={i}
-              className="cursor-pointer relative group"
-              whileHover={{ scale: 1.05 }}
-            >
-              <Link to={item.path} className="inline-block py-1 px-2">
-                {item.name}
-                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-black/30 group-hover:w-full transition-all duration-300"></span>
-              </Link>
-            </motion.li>
-          ))}
-        </ul>
-
-        <div className="hidden md:flex items-center gap-4">
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 sm:pt-6 pointer-events-none">
+      <motion.nav
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className={`pointer-events-auto w-full max-w-5xl rounded-full px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-300 ${
+          scrolled
+            ? "glass-nav shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10"
+            : "bg-neutral-900/60 backdrop-blur-md border border-white/10"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          {/* Logo & Status Badge */}
           <a
-            href="https://github.com/sardorbek-3226"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#home"
+            onClick={(e) => handleNavClick(e, "#home")}
+            className="flex items-center gap-3 group"
           >
-            <motion.img
-              className="rounded-full cursor-pointer shadow-md w-15"
-              src="/github.png"
-              alt="GitHub"
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              transition={{ type: "spring", stiffness: 250 }}
-            />
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-cyan-400 p-[1px]">
+              <div className="w-full h-full rounded-full bg-[#07090e] flex items-center justify-center text-xs font-bold font-mono-code text-white group-hover:scale-95 transition-transform">
+                SI
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold tracking-tight text-white group-hover:text-indigo-400 transition-colors">
+                Sardor<span className="text-indigo-400">.dev</span>
+              </span>
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] text-neutral-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Hamkorlikka ochiq
+              </span>
+            </div>
           </a>
 
-          <a
-            href="https://t.me/ibragimov_3226"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <motion.img
-              className="rounded-full cursor-pointer shadow-md w-15"
-              src="/tg.png"
-              alt="Telegram"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 250 }}
-            />
-          </a>
-        </div>
-
-        <button
-          className="md:hidden inline-flex items-center justify-center p-2 rounded-md focus:outline-none"
-          onClick={() => setOpen((s) => !s)}
-          aria-expanded={open}
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          <FaBars/>
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="md:hidden overflow-hidden mt-4"
-          >
-            <ul className="flex flex-col gap-3 text-base font-semibold">
-              {navItems.map((item, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ x: -10, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: i * 0.05 }}
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-1 bg-white/[0.04] p-1 rounded-full border border-white/[0.06]">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.href.replace("#", "");
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={`relative px-4 py-1.5 text-xs font-medium rounded-full transition-colors ${
+                    isActive
+                      ? "text-white"
+                      : "text-neutral-400 hover:text-neutral-200"
+                  }`}
                 >
-                  <Link
-                    to={item.path}
-                    onClick={() => setOpen(false)}
-                    className="block py-3 px-4 rounded-md hover:bg-black/5"
-                  >
-                    {item.name}
-                  </Link>
-                </motion.li>
-              ))}
-              <li className="pt-2">
-                <div className="flex items-center gap-3 px-4">
+                  {isActive && (
+                    <motion.div
+                      layoutId="activePill"
+                      className="absolute inset-0 bg-white/10 rounded-full border border-white/15"
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.name}</span>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Right Action & Socials */}
+          <div className="hidden md:flex items-center gap-3">
+            <a
+              href="https://github.com/sardorbek-3226"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="p-2 text-neutral-400 hover:text-white rounded-full hover:bg-white/10 transition-all"
+            >
+              <FaGithub className="text-base" />
+            </a>
+            <a
+              href="https://t.me/ibragimov_3226"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Telegram"
+              className="p-2 text-neutral-400 hover:text-cyan-400 rounded-full hover:bg-white/10 transition-all"
+            >
+              <FaTelegram className="text-base" />
+            </a>
+            
+
+            <a
+              href="#contact"
+              onClick={(e) => handleNavClick(e, "#contact")}
+              className="px-4 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 rounded-full shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 active:scale-95"
+            >
+              Bog'lanish
+            </a>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close Menu" : "Open Menu"}
+            className="md:hidden p-2 text-neutral-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+          >
+            {isOpen ? <HiXMark className="text-xl" /> : <HiBars3 className="text-xl" />}
+          </button>
+        </div>
+
+        {/* Mobile Dropdown Drawer */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="md:hidden overflow-hidden pt-4 pb-2 border-t border-white/10 mt-3"
+            >
+              <div className="flex flex-col gap-1">
+                {NAV_ITEMS.map((item) => {
+                  const isActive = activeSection === item.href.replace("#", "");
+                  return (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                        isActive
+                          ? "bg-indigo-500/20 text-indigo-300 font-semibold"
+                          : "text-neutral-300 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      {item.name}
+                    </a>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/10 px-2">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    window.dispatchEvent(new CustomEvent("replay-timeline-scale"));
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-300 hover:text-white border border-indigo-500/30"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+                  <span>Vaqt Chizig'i</span>
+                </button>
+
+                <div className="flex items-center gap-3">
                   <a
                     href="https://github.com/sardorbek-3226"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="p-2 text-neutral-300 hover:text-white"
                   >
-                    <img
-                      src="/github.png"
-                      alt="GitHub"
-                      className="rounded-full w-10 cursor-pointer hover:scale-110 transition"
-                    />
+                    <FaGithub className="text-lg" />
                   </a>
-
                   <a
                     href="https://t.me/ibragimov_3226"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="p-2 text-neutral-300 hover:text-cyan-400"
                   >
-                    <img
-                      src="/tg.png"
-                      alt="Telegram"
-                      className="rounded-full w-10 cursor-pointer hover:scale-110 transition"
-                    />
+                    <FaTelegram className="text-lg" />
                   </a>
                 </div>
-              </li>
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+                <a
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                  className="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 rounded-full"
+                >
+                  Bog'lanish
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+    </header>
   );
 };
 
 export default Navbar;
+

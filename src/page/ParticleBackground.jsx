@@ -1,8 +1,8 @@
-// ParticleBackground.jsx
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
 
 const ParticleBackground = () => {
+  return null;
+};
 //   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 //   const [particles, setParticles] = useState([]);
 
@@ -53,6 +53,6 @@ const ParticleBackground = () => {
 //       ))}
 //     </div>
 //   );
-};
+// };
 
 export default ParticleBackground;

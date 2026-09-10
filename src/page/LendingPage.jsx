@@ -1,528 +1,835 @@
-// App.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import {
-  FaBars,
-  FaTimes,
-  FaArrowRight,
-  FaDribbble,
   FaGithub,
-  FaEnvelope,
-} from "react-icons/fa";
+  FaTelegram,
+  FaArrowRight,
+  FaArrowDown,
+} from "react-icons/fa6";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiJavascript,
+  SiTailwindcss,
+  SiFramer,
+  SiVite,
+  SiGit,
+  SiVercel,
+  SiNodedotjs,
+  SiPostgresql,
+  SiFreelancer,
+} from "react-icons/si";
+import {
+  HiSparkles,
+  HiCodeBracket,
+  HiDevicePhoneMobile,
+  HiArrowTopRightOnSquare,
+  HiArrowDownTray,
+  HiBolt,
+  HiCheckBadge,
+} from "react-icons/hi2";
+
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Contact from "./Contact.jsx";
-/** * =================================================================
- * I. CONFIGURATION & DATA
+import TimelineScalePreloader from "../components/TimelineScalePreloader.jsx";
+import TimelineScaleGallery from "../components/TimelineScaleGallery.jsx";
+import { PROJECTS } from "../data/projects";
+
+const SKILL_CATEGORIES = [
+  {
+    title: "Asosiy Frontend",
+    description: "Kengaytiriladigan, qulay va reaktiv foydalanuvchi interfeyslarini yaratish.",
+    skills: [
+      { name: "React", icon: SiReact, color: "#06b6d4" },
+      { name: "Next.js", icon: SiNextdotjs, color: "#ffffff" },
+      { name: "TypeScript", icon: SiTypescript, color: "#3b82f6" },
+      { name: "JavaScript (ES6+)", icon: SiJavascript, color: "#eab308" },
+    ],
+  },
+  {
+    title: "Uslub va Animatsiya",
+    description: "Silliq, jozibador va yuqori sifatli vizual tajribani shakllantirish.",
+    skills: [
+      { name: "Tailwind CSS", icon: SiTailwindcss, color: "#38bdf8" },
+      { name: "Framer Motion", icon: SiFramer, color: "#ec4899" },
+      { name: "Moslashuvchan Tizimlar", icon: HiDevicePhoneMobile, color: "#818cf8" },
+      { name: "Dizayn Tizimlari", icon: HiSparkles, color: "#a855f7" },
+    ],
+  },
+  {
+    title: "Vositalar va Ekotizim",
+    description: "Zamonaviy ishlab chiquvchi muhiti, joylashtirish va server bilan ishlash.",
+    skills: [
+      { name: "Git & GitHub", icon: SiGit, color: "#f97316" },
+      { name: "Vite", icon: SiVite, color: "#a855f7" },
+      { name: "Vercel", icon: SiVercel, color: "#ffffff" },
+      { name: "Node.js Asoslari", icon: SiNodedotjs, color: "#22c55e" },
+      { name: "PostgreSQL", icon: SiPostgresql, color: "#3b82f6" },
+    ],
+  },
+];
+
+const STATS = [
+  { value: "11+", label: "Yaratilgan Loyihalar", icon: HiCodeBracket },
+  { value: "100%", label: "Moslashuvchan Dizayn", icon: HiDevicePhoneMobile },
+  { value: "60 FPS", label: "Silliq Harakatlar", icon: HiBolt },
+];
+
+/**
+ * =================================================================
+ * II. ANIMATION VARIANTS
  * =================================================================
  */
 
-const NAV_ITEMS = [
-  { name: "01. Home", href: "#home" },
-  { name: "02. About", href: "#about" },
-  { name: "03. Works", href: "#works" },
-  { name: "04. Contact", href: "#contact" },
-];
-
-const PROJECTS = [
-  {
-    title: "NetChat",
-    category: "Real-time chat app with secure auth and modern UI.",
-    image: "/NetChat.png",
-    link: "https://net-chat-five.vercel.app/",
-  },
-  {
-    title: "Healthy Blog",
-    category: "Blog platform with authentication and content management.",
-    image: "/healthy.png",
-    link: "https://end-exam.vercel.app/",
-  },
-  {
-    title: "DiaNova",
-    category: "Healthcare platform for diabetes monitoring.",
-    image: "/deanova.jpg",
-    link: "https://dea-nova.vercel.app/",
-  },
-  {
-    title: "Portfolio",
-    category: "Personal portfolio built with React & Tailwind.",
-    image: "/mypro.png",
-    link: "https://ibrohimovs.vercel.app/",
-  },
-  {
-    title: "Ludish",
-    category: "Fast, simple website with no registration required.",
-    image: "/ludish.png",
-    link: "https://ludish.vercel.app/",
-  },
-  {
-    title: "Healthy Food",
-    category: "Website about healthy nutrition and lifestyle.",
-    image: "/endexam.png",
-    link: "https://end-exam.vercel.app/",
-  },
-];
-
-const SKILLS = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Tailwind CSS",
-  "Framer Motion",
-  "Node.js",
-  "PostgreSQL",
-  "Design Systems",
-  "CI/CD",
-  "Testing (Jest)",
-];
-
-/** * =================================================================
- * II. FRAMER MOTION VARIANTS
- * =================================================================
- */
-
-// Global transition for all section components
-const SECTION_TRANSITION_VARIANTS = {
-  initial: { opacity: 0, y: 30 },
-  animate: {
+const fadeIn = {
+  hidden: { opacity: 0, y: 25 },
+  visible: (custom = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
-  },
+    transition: { duration: 0.7, delay: custom * 0.1, ease: [0.16, 1, 0.3, 1] },
+  }),
 };
 
-// Home section stagger for cinematic title entrance
-const HOME_STAGGER_VARIANTS = {
+const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
+      staggerChildren: 0.12,
+      delayChildren: 0.15,
     },
   },
 };
 
-const HOME_ITEM_VARIANTS = {
-  hidden: { opacity: 0, y: 70 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 1.2,
-      ease: [0.2, 0.65, 0.3, 0.9],
-    },
-  },
-};
-
-/** * =================================================================
- * III. CORE COMPONENT (App.jsx)
+/**
+ * =================================================================
+ * III. AMBIENT BACKGROUND COMPONENT
  * =================================================================
  */
 
-const App = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const AmbientBackground = () => (
+  <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+    {/* Radial Mesh Glows */}
+    <motion.div
+      animate={{
+        scale: [1, 1.15, 1],
+        x: [0, 30, 0],
+        y: [0, -40, 0],
+      }}
+      transition={{
+        duration: 18,
+        repeat: Infinity,
+        repeatType: "mirror",
+        ease: "easeInOut",
+      }}
+      className="absolute -top-[15%] left-[15%] w-[550px] h-[550px] rounded-full bg-indigo-600/15 blur-[150px]"
+    />
+
+    <motion.div
+      animate={{
+        scale: [1, 1.25, 1],
+        x: [0, -40, 0],
+        y: [0, 50, 0],
+      }}
+      transition={{
+        duration: 22,
+        repeat: Infinity,
+        repeatType: "mirror",
+        ease: "easeInOut",
+      }}
+      className="absolute top-[35%] -right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-600/10 blur-[160px]"
+    />
+
+    <motion.div
+      animate={{
+        scale: [1, 1.2, 1],
+        x: [0, 50, 0],
+      }}
+      transition={{
+        duration: 25,
+        repeat: Infinity,
+        repeatType: "mirror",
+        ease: "easeInOut",
+      }}
+      className="absolute -bottom-[10%] left-[25%] w-[500px] h-[500px] rounded-full bg-purple-600/15 blur-[150px]"
+    />
+
+    {/* Subtle Grid Overlay */}
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+  </div>
+);
+
+/**
+ * =================================================================
+ * IV. MAIN LANDING PAGE COMPONENT
+ * =================================================================
+ */
+
+const LendingPage = () => {
+  const [activeFilter, setActiveFilter] = useState("all");
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
+    stiffness: 120,
     damping: 30,
     restDelta: 0.001,
   });
 
-  // --- Utility Component: Section Wrapper ---
-  // Applies consistent padding, ARIA roles, and Framer Motion view-based animation
-  const SectionWrapper = ({ id, children, className = "" }) => (
-    <motion.section
-      id={id}
-      className={`min-h-screen py-32 px-6 lg:px-20 ${className}`}
-      variants={SECTION_TRANSITION_VARIANTS}
-      initial="initial"
-      whileInView="animate"
-      viewport={{ once: true, amount: 0.1 }}
-    >
-      <div className="max-w-7xl mx-auto">{children}</div>
-    </motion.section>
-  );
+  const filteredProjects =
+    activeFilter === "all"
+      ? PROJECTS
+      : PROJECTS.filter((p) => p.category === activeFilter);
 
-  // --- Utility Component: Fixed Header/Navbar ---
-  const FixedHeader = () => (
-    <motion.header
-      className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100"
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8 }}
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-20 py-5 flex items-center justify-between font-serif">
-        {/* LOGO/TITLE */}
-        <a
-          href="#home"
-          className="text-lg font-black uppercase tracking-widest text-black hover:text-gray-700 transition-colors duration-300"
-        >
-          SARDOR.DEV
-        </a>
-
-        {/* DESKTOP MENU */}
-        <nav className="hidden md:flex">
-          <ul className="flex space-x-12 text-sm font-medium uppercase tracking-wide">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.name}>
-                <a
-                  href={item.href}
-                  className="relative group text-gray-800 hover:text-black transition-colors duration-300"
-                >
-                  {item.name}
-                  <span className="absolute left-0 -bottom-1 h-px w-0 bg-black transition-all duration-300 group-hover:w-full"></span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* MOBILE BUTTON (A11y Compliant) */}
-        <button
-          className="md:hidden text-2xl z-50 text-black hover:text-gray-700 transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-controls="mobile-menu"
-          aria-expanded={isMenuOpen}
-          aria-label={
-            isMenuOpen ? "Close navigation menu" : "Open navigation menu"
-          }
-        >
-          {isMenuOpen ? <FaTimes /> : <FaBars />}
-        </button>
-      </div>
-
-      {/* MOBILE MENU */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.nav
-            id="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="md:hidden bg-white/95 border-t border-gray-100"
-          >
-            <ul className="flex flex-col p-8 space-y-4 text-xl font-medium">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block py-2 hover:translate-x-1 transition-transform duration-300"
-                  >
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </motion.header>
-  );
-
-  // --- Utility Component: Scroll Indicator ---
-  const ScrollProgressIndicator = () => (
-    <motion.div
-      className="fixed top-[65px] lg:top-[69px] left-0 right-0 h-[1.5px] bg-black z-40 origin-[0%]"
-      style={{ scaleX }}
-    />
-  );
-
-  // --- Section 1: Home ---
-  const HomeSection = () => (
-    <SectionWrapper
-      id="home"
-      className="min-h-[90vh] flex items-center pt-24 lg:pt-0"
-    >
+  return (
+    <div className="relative min-h-screen bg-[#07090e] text-neutral-100 selection:bg-indigo-500 selection:text-white">
+      {/* Scroll Progress Bar */}
       <motion.div
-        className="w-full"
-        variants={HOME_STAGGER_VARIANTS}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* LARGE TYPOGRAPHY HEADLINE */}
-        <motion.h1
-          className="text-[12vw] lg:text-[160px] leading-none uppercase tracking-tighter font-black text-black mt-15"
-          variants={HOME_ITEM_VARIANTS}
+        className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 origin-left z-50 shadow-[0_0_12px_rgba(99,102,241,0.8)]"
+        style={{ scaleX }}
+      />
+
+      <TimelineScalePreloader />
+      <AmbientBackground />
+      <Navbar />
+
+      <main className="relative z-10 pt-24">
+        {/* =========================================================
+            SECTION 1: HERO
+        ========================================================== */}
+        <section
+          id="home"
+          className="relative min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12"
         >
-          SARDOR
-        </motion.h1>
-
-        <motion.h1
-          className="text-[12vw] lg:text-[160px] leading-none uppercase tracking-tighter font-black pb-8 border-b mt-15 border-black/80 text-black"
-          variants={HOME_ITEM_VARIANTS}
-        >
-          IBROHIMOV
-        </motion.h1>
-
-        <div className="flex flex-col md:flex-row justify-between pt-10 md:pt-16 text-xl font-light tracking-widest uppercase text-gray-700">
-          {/* SUBTITLE */}
-          <motion.p variants={HOME_ITEM_VARIANTS}>
-            Junior Frontend Developer
-          </motion.p>
-
-          {/* CTA */}
-          <motion.div variants={HOME_ITEM_VARIANTS} className="mt-8 md:mt-0">
-            <a
-              href="#works"
-              className="group relative cursor-pointer text-base uppercase font-medium border border-black px-6 py-3 hover:bg-black hover:text-white transition-all duration-300 ease-out"
-            >
-              View Selected Works
-            </a>
-          </motion.div>
-        </div>
-      </motion.div>
-    </SectionWrapper>
-  );
-
-  // --- Section 2: About ---
-  const AboutSection = () => {
-    const textFadeVariant = {
-      initial: { opacity: 0, y: 10 },
-      animate: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.6, staggerChildren: 0.1 },
-      },
-    };
-
-    return (
-      <SectionWrapper id="about" className="bg-white">
-        <h2 className="text-2xl font-normal uppercase tracking-widest text-gray-600 mb-16">
-          02. Expertise & Philosophy
-        </h2>
-
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-12 gap-12 border-t border-black pt-12"
-          variants={textFadeVariant}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.1 }}
-        >
-          {/* EDITORIAL TEXT BLOCK */}
-          <motion.div className="md:col-span-7" variants={textFadeVariant}>
-            <h3 className="text-5xl lg:text-6xl font-extrabold leading-snug mb-8">
-              Focused on performance, precision, and modern web architecture.
-            </h3>
-            <p className="text-lg leading-relaxed text-gray-800 mb-6">
-              I am a dedicated Junior Frontend Engineer specializing in
-              high-impact, scalable web solutions. My approach is heavily
-              influenced by minimalist, Swiss design principles: prioritizing
-              clarity, typography, and functional hierarchy over transient
-              visual trends.
-            </p>
-            <p className="text-lg leading-relaxed text-gray-800">
-              My expertise lies in translating complex design systems into
-              robust, component-driven applications using React and Next.js,
-              ensuring pixel-perfect execution and superior Lighthouse
-              performance scores.
-            </p>
-          </motion.div>
-
-          {/* SKILLS COLUMN */}
-          <div className="md:col-span-5">
-            <motion.h4
-              className="text-xl uppercase font-semibold mb-6 border-b border-black pb-2"
-              variants={textFadeVariant}
-            >
-              Core Stack
-            </motion.h4>
-            <ul className="flex flex-wrap gap-2 text-md font-medium">
-              {SKILLS.map((skill, index) => (
-                <motion.li
-                  key={skill}
-                  className="px-3 py-1 border border-gray-400 text-gray-800 hover:bg-black hover:text-white transition-all duration-300 cursor-default text-sm font-sans"
-                  custom={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
-                  viewport={{ once: true }}
-                >
-                  {skill}
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-        </motion.div>
-      </SectionWrapper>
-    );
-  };
-
-  // --- Section 3: Works ---
-  const WorksSection = () => {
-    return (
-      <SectionWrapper
-        id="works"
-        className="bg-gray-50 border-t border-gray-100"
-      >
-        <h2 className="text-2xl font-normal uppercase tracking-widest text-gray-600 mb-20">
-          03. Selected Projects
-        </h2>
-
-        <div className="space-y-32">
-          {PROJECTS.map((project, index) => (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full relative z-10">
+            {/* Left Content */}
             <motion.div
-              key={project.title}
-              className="group cursor-pointer"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.8, delay: index * 0.15 }}
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-7 text-center lg:text-left space-y-6"
             >
-              <a href={project.link} target="_blank" rel="noopener noreferrer">
-                {/* IMAGE CONTAINER with grayscale filter */}
-                <motion.div
-                  className="relative overflow-hidden group bg-gray-200 rounded-2xl shadow-lg"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {/* IMAGE */}
-                  <img
-                    src={project.image}
-                    alt={`Preview of ${project.title}`}
-                    className="w-full max-w-full max-h-48 md:max-h-60 lg:max-h-72 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 ease-out rounded-t-2xl"
-                  />
+              {/* Status Pill */}
+              <motion.div variants={fadeIn} className="inline-flex items-center">
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 shadow-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  <span>To'liq stavka va frilans uchun ochiq</span>
+                </div>
+              </motion.div>
 
-                  {/* TEXT OVERLAY */}
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-t-2xl">
-                    <span className="text-white text-2xl md:text-3xl font-bold uppercase tracking-widest">
-                      DISCOVER
+              {/* Main Headline */}
+              <motion.div variants={fadeIn} className="space-y-3">
+                <p className="font-mono text-xs uppercase tracking-[0.42em] text-indigo-400">
+                  Frontend Dasturchi • UI Mutaxassis
+                </p>
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                  Zamonaviy, tezkor va{" "}
+                  <span className="text-gradient">interaktiv</span>{" "}
+                  <span className="text-gradient-accent">veb-tajribalar</span> yarataman.
+                </h1>
+              </motion.div>
+
+              {/* Brief Bio */}
+              <motion.p
+                variants={fadeIn}
+                className="text-base sm:text-lg text-neutral-400 max-w-2xl leading-relaxed mx-auto lg:mx-0 border-l border-indigo-500/30 pl-4 sm:pl-5"
+              >
+                Salom, men <span className="text-white font-medium">Sardor Ibrohimov</span>man.
+                <span className="text-indigo-300 font-medium"> React</span>,{" "}
+                <span className="text-cyan-300 font-medium">Next.js</span>, hamda{" "}
+                <span className="text-pink-300 font-medium">Framer Motion & GSAP</span> yordamida
+                murakkab g'oyalarni chiroyli, qulay va 60fps tezlikdagi raqamli haqiqatga aylantiraman.
+              </motion.p>
+
+              {/* Action CTAs */}
+              <motion.div
+                variants={fadeIn}
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2"
+              >
+                <a
+                  href="#works"
+                  className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:scale-105 active:scale-95"
+                >
+                  <span>Loyihalarni Ko'rish</span>
+                  <FaArrowDown className="text-xs" />
+                </a>
+
+                <button
+                  onClick={() =>
+                    window.dispatchEvent(new CustomEvent("replay-timeline-scale"))
+                  }
+                  className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-indigo-300 bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 hover:text-white transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-lg shadow-indigo-500/10"
+                >
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+                  <span>Vaqt Chizig'i Animatsiyasi</span>
+                </button>
+
+                <a
+                  href="/28-29-noyabr.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-neutral-300 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:text-white transition-all hover:scale-105 active:scale-95"
+                >
+                  <HiArrowDownTray className="text-base text-indigo-400" />
+                  <span>Rezyume (CV)</span>
+                </a>
+              </motion.div>
+
+              {/* Social Links Row */}
+              <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-center lg:justify-start gap-3 pt-4 text-neutral-400"
+              >
+                <span className="text-xs uppercase tracking-widest text-neutral-500 mr-2">
+                  Ijtimoiy tarmoqlar:
+                </span>
+                <a
+                  href="https://github.com/sardorbek-3226"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:text-white transition-all"
+                  aria-label="GitHub Profile"
+                >
+                  <FaGithub className="text-base" />
+                </a>
+                <a
+                  href="https://t.me/ibragimov_3226"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:text-cyan-400 transition-all"
+                  aria-label="Telegram"
+                >
+                  <FaTelegram className="text-base" />
+                </a>
+                <a
+                  href="https://vercel.com/sardorbeks-projects-2e09c199"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:text-white transition-all"
+                  aria-label="Vercel"
+                >
+                  <SiVercel className="text-sm" />
+                </a>
+                <a
+                  href="https://www.freelancer.com/u/ibragimov3226"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:text-blue-400 transition-all"
+                  aria-label="Freelancer Profile"
+                >
+                  <SiFreelancer className="text-base" />
+                </a>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Hero Card / Visual */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-5 flex justify-center"
+            >
+              <div className="relative w-full max-w-sm sm:max-w-md">
+                {/* Glowing Outer Frame */}
+                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-cyan-500/30 blur-xl opacity-70" />
+
+                <div className="relative glass-panel rounded-3xl p-6 sm:p-8 border border-white/15 overflow-hidden">
+                  {/* Card Header */}
+                  <div className="flex items-center justify-between pb-6 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-14 h-14 rounded-2xl overflow-hidden border border-white/20 shadow-md">
+                        <img
+                          src="/man.jpg"
+                          alt="Sardor Ibrohimov"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white">
+                          Sardor Ibrohimov
+                        </h3>
+                        <p className="text-xs text-neutral-400 font-mono-code">
+                          @sardor.dev
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20">
+                      Frontend
                     </span>
                   </div>
-                </motion.div>
 
-                {/* DETAILS */}
-                <div className="mt-8 flex justify-between items-end">
-                  <div>
-                    <h3 className="text-4xl font-extrabold uppercase tracking-tight text-black transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-lg font-light text-gray-600 mt-2">
-                      {project.category}
+                  {/* Code snippet illustration */}
+                  <div className="my-6 p-4 rounded-xl bg-black/40 border border-white/[0.06] font-mono-code text-xs text-neutral-300 space-y-1.5">
+                    <div className="flex items-center gap-1.5 pb-2 text-neutral-500 border-b border-white/5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-rose-500/70" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+                      <span className="text-[10px] ml-1 text-neutral-500">
+                        EngineerProfile.tsx
+                      </span>
+                    </div>
+                    <p className="text-neutral-400">
+                      <span className="text-pink-400">const</span> dasturchi = {"{"}
                     </p>
+                    <p className="pl-4">
+                      ism: <span className="text-emerald-300">"Sardor"</span>,
+                    </p>
+                    <p className="pl-4">
+                      yonalish: <span className="text-emerald-300">"UI / UX & Animatsiyalar"</span>,
+                    </p>
+                    <p className="pl-4">
+                      unumdorlik: <span className="text-cyan-300">"99/100"</span>,
+                    </p>
+                    <p className="pl-4">
+                      qiziqish: <span className="text-amber-300">"Zamonaviy Veb"</span>
+                    </p>
+                    <p className="text-neutral-400">{"}"};</p>
                   </div>
 
-                  {/* MINIMAL LINK */}
-                  <div className="text-black text-lg flex items-center gap-2 border-b border-black pb-1 group-hover:border-gray-500 transition-colors">
-                    View Project
-                    <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  {/* Floating Badges */}
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                      <HiCheckBadge className="text-xl text-indigo-400 flex-shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-white">11+ Loyiha</div>
+                        <div className="text-[10px] text-neutral-400">Tayyor dasturlar</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                      <HiBolt className="text-xl text-cyan-400 flex-shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-white">60 FPS</div>
+                        <div className="text-[10px] text-neutral-400">Silliq animatsiya</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </a>
+              </div>
             </motion.div>
-          ))}
-        </div>
-      </SectionWrapper>
-    );
-  };
+          </div>
+        </section>
 
-  // --- Section 4: Contact ---
-  const ContactSection = () => {
-    const linkVariants = {
-      initial: { opacity: 0, x: -10 },
-      animate: (i) => ({
-        opacity: 1,
-        x: 0,
-        transition: { duration: 0.5, delay: 0.6 + i * 0.1 },
-      }),
-    };
-
-    return (
-      <SectionWrapper id="contact" className="bg-white">
-        <h2 className="text-2xl font-normal uppercase tracking-widest text-gray-600 mb-16">
-          04. Get In Touch
-        </h2>
-
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-12 gap-12 border-t border-black pt-12"
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={SECTION_TRANSITION_VARIANTS}
+        {/* =========================================================
+            SECTION 2: ABOUT & PHILOSOPHY
+        ========================================================== */}
+        <section
+          id="about"
+          className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/[0.06]"
         >
-          {/* CONTACT HEADING */}
-          <div className="md:col-span-7">
-            <h3 className="text-7xl lg:text-8xl font-black leading-tight mb-8">
-              <span className="text-gray-400">READY TO</span> COLLABORATE.
-            </h3>
-            <p className="text-xl leading-relaxed text-gray-800 mb-10 max-w-lg">
-              Let's discuss your next high-end project. I am available for
-              junior contract roles and consulting on large-scale web
-              architecture and design systems.
-            </p>
+          <div className="space-y-16">
+            {/* Header */}
+            <div className="max-w-3xl">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 mb-4"
+              >
+                <HiSparkles className="text-sm" />
+                <span>Men Haqimda & Falsafa</span>
+              </motion.div>
 
-            <a
-              href="mailto:sardor.dev@example.com"
-              className="text-2xl font-extrabold uppercase relative group inline-block text-black hover:text-gray-700 transition-colors duration-300"
-            >
-              <FaEnvelope className="inline-block mr-3 text-2xl" />{" "}
-              ibrohimovsardor5525@gmail.com
-              <span className="absolute left-0 -bottom-1 h-1 bg-black w-0 group-hover:w-full transition-all duration-500 ease-out"></span>
-            </a>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight"
+              >
+                Raqamli tajribalarni <span className="text-gradient">aniqlik</span>, soddalik va maqsad bilan yarataman.
+              </motion.h2>
+            </div>
+
+            {/* Bento Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              {/* Story Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="md:col-span-8 glass-panel rounded-3xl p-8 border border-white/10 space-y-4"
+              >
+                <h3 className="text-xl font-bold text-white">
+                  Dizayn va muhandislik uyg'unligi
+                </h3>
+                <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
+                  Eng yaxshi raqamli mahsulotlar mustahkam kod arxitekturasi va estetik soddalik uyg'unligida tug'iladi deb hisoblayman. Toza dizayn va zamonaviy mikro-interaksiya tamoyillariga tayangan holda, vizual tartib, qulaylik va tabiiy aloqaga asosiy e'tibor qarataman.
+                </p>
+                <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
+                  Real vaqtda ishlovchi messenjerlar yoki katta hajmdagi ma'lumotlarga ega tibbiyot tizimlarini yaratishda barcha qurilmalarga to'liq moslashuvchanlik, chaqqon tezlik va foydalanuvchi uchun yengil tajribani kafolatlayman.
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {[
+                    "Toza Kod",
+                    "Modulli Arxitektura",
+                    "Qulaylik va A11y",
+                    "Tezlikni Optimallash",
+                    "Mikro-Animatsiyalar",
+                  ].map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 rounded-lg text-xs font-medium bg-white/[0.04] text-neutral-300 border border-white/10"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Stats Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="md:col-span-4 glass-panel rounded-3xl p-8 border border-white/10 flex flex-col justify-between gap-6"
+              >
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+                  Asosiy Ko'rsatkichlar
+                </h3>
+                <div className="space-y-6">
+                  {STATS.map((stat) => (
+                    <div key={stat.label} className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl">
+                        <stat.icon />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-extrabold text-white">
+                          {stat.value}
+                        </div>
+                        <div className="text-xs text-neutral-400">
+                          {stat.label}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
           </div>
+        </section>
 
-          {/* SOCIAL LINKS */}
-          <div className="md:col-span-5">
-            <motion.h4 className="text-xl uppercase font-semibold mb-6 border-b border-black pb-2">
-              Digital Presence
-            </motion.h4>
-            <ul className="space-y-4">
-              {[
-                { name: "Vercel", icon: FaDribbble, href: "https://vercel.com/sardorbeks-projects-2e09c199" },
-                { name: "GitHub", icon: FaGithub, href: "https://github.com/sardorbek-3226" },
-                { name: "Freelance", icon: FaEnvelope, href: "https://www.freelancer.com/u/ibragimov3226",
-                }
-              ].map((link, index) => (
-                <motion.li
-                  key={link.name}
-                  custom={index}
-                  variants={linkVariants}
+        {/* =========================================================
+            SECTION 3: SKILLS & TECH STACK
+        ========================================================== */}
+        <section
+          id="skills"
+          className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/[0.06]"
+        >
+          <div className="space-y-16">
+            <div className="text-center max-w-2xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 mb-4"
+              >
+                <HiCodeBracket className="text-sm" />
+                <span>Texnologiyalar & Vositalar</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
+              >
+                Men Mukammal Egallagan <span className="text-gradient-accent">Texnologiyalar</span>
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="mt-4 text-sm sm:text-base text-neutral-400"
+              >
+                Har kuni amaliyotda samarali qo'llaydigan zamonaviy dasturlash tillari, kutubxonalar va freymvorklar ekotizimi.
+              </motion.p>
+            </div>
+
+            {/* Category Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {SKILL_CATEGORIES.map((category, idx) => (
+                <motion.div
+                  key={category.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between hover:border-indigo-500/30 transition-all group"
                 >
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xl font-medium relative group text-gray-700 hover:text-black transition-colors duration-300"
-                  >
-                    <link.icon className="inline-block mr-3 text-2xl" />
-                    {link.name}
-                    <span className="absolute left-0 -bottom-px h-px w-0 bg-black transition-all duration-300 group-hover:w-full"></span>
-                  </a>
-                </motion.li>
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-2">
+                      {category.title}
+                    </h3>
+                    <p className="text-xs text-neutral-400 mb-6 leading-relaxed">
+                      {category.description}
+                    </p>
+
+                    <div className="space-y-3">
+                      {category.skills.map((skill) => (
+                        <div
+                          key={skill.name}
+                          className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] transition-all"
+                        >
+                          <div className="flex items-center gap-3">
+                            <skill.icon
+                              className="text-lg"
+                              style={{ color: skill.color }}
+                            />
+                            <span className="text-sm font-medium text-neutral-200">
+                              {skill.name}
+                            </span>
+                          </div>
+                          <span className="w-1.5 h-1.5 rounded-full bg-neutral-600 group-hover:bg-indigo-400 transition-colors" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
               ))}
-            </ul>
+            </div>
           </div>
-        </motion.div>
-      </SectionWrapper>
-    );
-  };
+        </section>
 
-  // --- Footer ---
-  const Footer = () => (
-    <footer className="text-center text-sm text-black/60 py-8 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 lg:px-20 font-serif tracking-wider">
-        <p>
-          © {new Date().getFullYear()} Sardor Ibrohimov. All Rights Reserved.
-          Built with React & Framer Motion.
-        </p>
-      </div>
-    </footer>
-  );
+        {/* =========================================================
+            SECTION 4: FEATURED WORKS / PROJECTS
+        ========================================================== */}
+        <section
+          id="works"
+          className="py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/[0.06]"
+        >
+          <div className="space-y-12">
+            {/* Interactive GSAP Timeline Scale Reel */}
+            <TimelineScaleGallery />
 
-  // --- Main App Render ---
-  return (
-    <div
-      className="relative bg-white text-black font-serif antialiased scroll-smooth"
-      style={{ scrollPaddingTop: "80px" }}
-    >
-      <FixedHeader />
-      <ScrollProgressIndicator />
+            {/* Header & Filter Controls */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium text-pink-400 bg-pink-500/10 border border-pink-500/20 mb-4"
+                >
+                  <HiSparkles className="text-sm" />
+                  <span>Portfolio Ko'rgazmasi</span>
+                </motion.div>
 
-      <main>
-        <HomeSection />
-        <AboutSection />
-        <WorksSection />
-        <ContactSection />
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight"
+                >
+                  Tanlangan <span className="text-gradient">Loyihalar</span>
+                </motion.h2>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-white/[0.03] border border-white/10">
+                {[
+                  { id: "all", label: "Barcha loyihalar (11)" },
+                  { id: "fullstack", label: "Veb-ilovalar & Full-Stack" },
+                  { id: "tools", label: "Mahsulotlar & Xizmatlar" },
+                  { id: "content", label: "Portallar & Bloglar" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveFilter(tab.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                      activeFilter === tab.id
+                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
+                        : "text-neutral-400 hover:text-white hover:bg-white/[0.04]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Projects Grid */}
+            <motion.div
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              <AnimatePresence>
+                {filteredProjects.map((project) => (
+                  <motion.div
+                    layout
+                    key={project.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4 }}
+                    className="glass-panel rounded-3xl border border-white/10 overflow-hidden flex flex-col justify-between hover:border-indigo-500/40 hover:shadow-[0_10px_35px_rgba(99,102,241,0.15)] transition-all duration-300 group"
+                  >
+                    <div>
+                      {/* Image Preview */}
+                      <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900 border-b border-white/[0.08]">
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent opacity-80" />
+
+                        {/* Top Category Badge */}
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-black/60 backdrop-blur-md text-white border border-white/15">
+                            {project.categoryLabel}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 space-y-3">
+                        <h3 className="text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors">
+                          {project.title}
+                        </h3>
+
+                        <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed line-clamp-3">
+                          {project.description}
+                        </p>
+
+                        {/* Tech Tags */}
+                        <div className="flex flex-wrap gap-1.5 pt-2">
+                          {project.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2.5 py-0.5 rounded-md text-[10px] font-medium bg-white/[0.03] text-neutral-300 border border-white/[0.06]"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons Footer */}
+                    <div className="p-6 pt-0 flex items-center justify-between border-t border-white/[0.06] mt-4">
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                      >
+                        <span>Jonli Ko'rish</span>
+                        <HiArrowTopRightOnSquare className="text-sm" />
+                      </a>
+
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} Source Code`}
+                        className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.06] transition-all"
+                      >
+                        <FaGithub className="text-sm" />
+                      </a>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* GitHub & Vercel Global Hub Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 mt-12 flex flex-col lg:flex-row items-center justify-between gap-6 relative overflow-hidden"
+            >
+              <div className="space-y-2 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400">
+                  <FaGithub className="text-sm" />
+                  <span>Ochiq Kod & Bulutli Deploylar</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white">
+                  GitHub & Vercelda 40+ Loyihalar bilan tanishing
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-400 max-w-xl">
+                  Barcha o'quv, tajriba va to'liq veb-ilovalarni GitHub profilingizdagi repozitoriyalar hamda Vercel deploymentlari orqali to'g'ridan-to'g'ri ko'rishingiz mumkin.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href="https://github.com/sardorbek-3226?tab=repositories"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-semibold text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 transition-all hover:scale-105 active:scale-95"
+                >
+                  <FaGithub className="text-base" />
+                  <span>GitHub Repozitoriyalar (40+)</span>
+                  <HiArrowTopRightOnSquare className="text-xs" />
+                </a>
+
+                <a
+                  href="https://vercel.com/sardorbeks-projects-2e09c199"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 shadow-md shadow-indigo-500/20 transition-all hover:scale-105 active:scale-95"
+                >
+                  <SiVercel className="text-sm" />
+                  <span>Vercel Loyihalari</span>
+                  <HiArrowTopRightOnSquare className="text-xs" />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            SECTION 5: PROCESS & PHILOSOPHY (HOW I WORK)
+        ========================================================== */}
+        <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/[0.06]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 text-xl font-mono-code font-bold">
+                01
+              </div>
+              <h3 className="text-xl font-bold text-white">Toza Arxitektura</h3>
+              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                Qayta ishlatiluvchi modulli React komponentlari, kengaytiriladigan holat boshqaruvi va barqaror struktura yaratish.
+              </p>
+            </div>
+
+            <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl font-mono-code font-bold">
+                02
+              </div>
+              <h3 className="text-xl font-bold text-white">Tabiiy Mikro-Harakat</h3>
+              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                Framer Motion va GSAP yordamida diqqatni jalb qiluvchi, silliq 60fps tezlikdagi foydali animatsiyalar yaratish.
+              </p>
+            </div>
+
+            <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 text-xl font-mono-code font-bold">
+                03
+              </div>
+              <h3 className="text-xl font-bold text-white">Birinchi O'rinda Tezlik</h3>
+              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                Lahzalik yuklanish, yengil kod hajmi, optimallashtirilgan tasvirlar va 95+ Lighthouse tezlik ko'rsatkichi.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            SECTION 6: CONTACT
+        ========================================================== */}
         <Contact />
       </main>
 
@@ -531,4 +838,5 @@ const App = () => {
   );
 };
 
-export default App;
+export default LendingPage;
+
